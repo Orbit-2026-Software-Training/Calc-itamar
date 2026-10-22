@@ -10,32 +10,26 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // App State: Stores current input and calculation history
   String currentNumbersPressed = '';
   final List<String> _history = [];
   int _historyIndex = 0;
   bool _showHistory = false;
 
-  // Input Handler: Validates and updates the screen when buttons are pressed
   void _buttonPressed(String text) {
     setState(() {
       if (currentNumbersPressed == 'Error') {
         currentNumbersPressed = '';
       }
 
-      if (text == '.') {
-        List<String> parts = currentNumbersPressed.split(RegExp(r'[+\-x÷ ]'));
-        if (parts.isNotEmpty && parts.last.contains('.')) {
-          return; 
-        }
-      }
 
       currentNumbersPressed += text;
     });
   }
-
-  // Math Engine: Converts the text input into a final mathematical answer
+//math solver 
   String _calculateResult(String userInput) {
+    if(userInput.contains('..')){
+        currentNumbersPressed = 'Error';
+      }
     if (userInput.trim().isEmpty) return '';
 
     try {
@@ -59,7 +53,7 @@ class _MyAppState extends State<MyApp> {
       }
 
       equationParts.add(currentNumber);
-      equationParts.removeWhere((token) => token.trim().isEmpty);
+      equationParts.removeWhere((currentNumber) => currentNumber.trim().isEmpty);
 
       for (int i = 1; i < equationParts.length; i += 2) {
         if (equationParts[i] == '*' || equationParts[i] == '/') {
@@ -99,8 +93,8 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  // User Interface: Lays out the display, history panel, and keypad
   @override
+  //front end
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -126,7 +120,7 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
               ),
-
+              //history box
               if (_showHistory)
                 Container(
                   margin: const EdgeInsets.only(bottom: 10.0),
@@ -135,6 +129,7 @@ class _MyAppState extends State<MyApp> {
                   height: 48.0,
                   child: Row(
                     children: [
+                      //histroy arrow up
                       IconButton(
                         icon: const Icon(Icons.arrow_drop_up, color: Colors.black54),
                         onPressed: () {
@@ -144,6 +139,7 @@ class _MyAppState extends State<MyApp> {
                             }
                           });
                         },
+                        //history arrow down
                       ),
                       IconButton(
                         icon: const Icon(Icons.arrow_drop_down, color: Colors.black54),
@@ -155,6 +151,7 @@ class _MyAppState extends State<MyApp> {
                           });
                         },
                       ),
+                      //if theres no history to show No History
                       Expanded(
                         child: Text(
                           _history.isEmpty ? 'No History' : _history[_historyIndex],
@@ -166,6 +163,7 @@ class _MyAppState extends State<MyApp> {
                           ),
                         ),
                       ),
+                      //history delete
                       IconButton(
                         icon: const Icon(Icons.delete_outline, color: Colors.red),
                         onPressed: () {
@@ -178,7 +176,7 @@ class _MyAppState extends State<MyApp> {
                     ],
                   ),
                 ),
-
+                //numbers buttons
               Expanded(
                 child: SizedBox(
                   width: 300,
@@ -202,7 +200,7 @@ class _MyAppState extends State<MyApp> {
                       CalcButton(buttonText: '2', onPressed: () => _buttonPressed('2')),
                       CalcButton(buttonText: '3', onPressed: () => _buttonPressed('3')),
                       CalcButton(buttonText: ' x ', onPressed: () => _buttonPressed(' x ')),
-                      
+                      //clear
                       CalcButton(
                         buttonText: 'C',
                         onPressed: () {
@@ -214,15 +212,17 @@ class _MyAppState extends State<MyApp> {
                       CalcButton(buttonText: '0', onPressed: () => _buttonPressed('0')),
                       CalcButton(buttonText: '.', onPressed: () => _buttonPressed('.')),
                       CalcButton(buttonText: ' ÷ ', onPressed: () => _buttonPressed(' ÷ ')),
-                      
+                      //history button
                       CalcButton(
                         buttonText: '⟲',
                         onPressed: () {
                           setState(() {
+                            //turns on history box but making the boolen true
                             _showHistory = !_showHistory;
                           });
                         },
-                      ),                     
+                      ),    
+                      //delte button                 
                       CalcButton(
                         buttonText: '⌫',
                         onPressed: () {
@@ -236,6 +236,7 @@ class _MyAppState extends State<MyApp> {
                           });
                         },
                       ),
+                      //equals button printing the resualt
                       CalcButton(
                         buttonText: '=',
                         onPressed: () {
@@ -263,8 +264,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-
-//A reusable widget to make a button template to keep the grid code clean
+//reuseable button widget
 class CalcButton extends StatelessWidget {
   final String buttonText;
   final VoidCallback onPressed;
